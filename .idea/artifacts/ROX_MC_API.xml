@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="ROX-MC-API">
+    <output-path>D:/ROX/minecraft_server/plugins</output-path>
+    <root id="archive" name="ROX-MC-API.jar">
+      <element id="module-output" name="ROX-MC-API" />
+      <element id="file-copy" path="$PROJECT_DIR$/src/main/java/plugin.yml" />
+    </root>
+  </artifact>
+</component>
