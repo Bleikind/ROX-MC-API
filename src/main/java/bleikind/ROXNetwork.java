@@ -3,7 +3,6 @@ package bleikind;
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
-import java.util.Stack;
 import java.util.UUID;
 public class ROXNetwork {
 
@@ -21,8 +20,6 @@ public class ROXNetwork {
 
     private Thread inputThread;
 
-    private Stack stack = new Stack();
-
     private static ArrayList<String> index = new ArrayList<>();
 
     public ROXNetwork(String hostname, int port, UUID minecraftServerUUID, String password){
@@ -32,7 +29,7 @@ public class ROXNetwork {
         this.minecraftServerUUID = minecraftServerUUID;
     }
 
-    private boolean connect(){
+    public boolean connect(){
         try {
             socket = new Socket(hostname, port);
 
@@ -41,7 +38,8 @@ public class ROXNetwork {
 
             writer.println(minecraftServerUUID + "§" + password);
 
-            switch(reader.readLine()){
+            String answer = reader.readLine();
+            switch(answer){
                 case "§UUID_NOT_FOUND":
                         ROXApi.getInstance().getLogger().warning("Could not connect to ROX Server. UUID is not registered.");
                     break;
@@ -52,10 +50,10 @@ public class ROXNetwork {
 
                 case "§MC_SERVER_CONNECTED":
                     (inputThread = new Thread(ROXNetwork::inputThread)).start();
-                    break;
+                    return true;
 
                 default:
-
+                    ROXApi.getInstance().getLogger().warning("Is the api on the newest version? Because i can not handle this information: " + answer);
                     break;
             }
 
@@ -64,6 +62,14 @@ public class ROXNetwork {
         }
 
         return false;
+    }
+
+    public Socket getSocket(){
+        return socket;
+    }
+
+    public Thread getInputThread(){
+        return inputThread;
     }
 
     private static void inputThread() {
@@ -81,8 +87,8 @@ public class ROXNetwork {
         }
     }
 
-    public void send(String key, String value){
-        writer.println("§" + key + "§" + value);
+    public void send(String key, Object value){
+        writer.println("§" + key + "§" + value.toString());
     }
 
     public String getFirstElement(){
@@ -95,6 +101,14 @@ public class ROXNetwork {
         String last = index.get(index.size());
         index.remove(index.size());
         return last;
+    }
+
+    public void close(){
+        try {
+            socket.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
 }
