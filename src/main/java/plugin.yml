@@ -2,3 +2,9 @@ name: ROX-MC-API
 author: Bleikind
 version: 1.0
 main: bleikind.ROXApi
+
+commands:
+  rox:
+    usage: /<command> (update, config, notify, web, interval, put, network, reload) <arg> <arg>
+    description: The command to control the bridge.
+    permission: rox.update
